@@ -14,6 +14,8 @@ import com.gbrlbarreto.helpdesk.repositories.TecnicoRepository;
 import com.gbrlbarreto.helpdesk.services.exceptions.DataIntegrityViolationExcepetion;
 import com.gbrlbarreto.helpdesk.services.exceptions.ObjectNotFoundException;
 
+import jakarta.validation.Valid;
+
 @Service
 public class TecnicoService {
     
@@ -36,6 +38,14 @@ public class TecnicoService {
         validaPorCpfEEmail(objDTO);
         Tecnico newObj = new Tecnico(objDTO);
         return repository.save(newObj);
+    }
+
+    public Tecnico update(Integer id, @Valid TecnicoDTO objDTO) {
+        objDTO.setId(id);
+        Tecnico oldObj = findById(id);
+        validaPorCpfEEmail(objDTO);
+        oldObj = new Tecnico(objDTO);
+        return repository.save(oldObj);
     }
 
     private void validaPorCpfEEmail(TecnicoDTO objDTO) {
