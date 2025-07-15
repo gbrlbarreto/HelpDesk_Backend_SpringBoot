@@ -23,5 +23,5 @@ public class ChamadoResource {
         Chamado obj = service.findById(id);
         return ResponseEntity.ok().body(new ChamadoDTO(obj));
 
-    }   
+    }
 }
