@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,9 +21,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.gbrlbarreto.helpdesk.security.JWTAuthenticationFilter;
+import com.gbrlbarreto.helpdesk.security.JWTAuthorizationFilter;
 import com.gbrlbarreto.helpdesk.security.JWTUtil;
 
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfig{
 
@@ -44,6 +47,7 @@ public class SecurityConfig{
         http.cors(withDefaults());
         http.csrf(csrf -> csrf.disable());
         http.addFilter(new JWTAuthenticationFilter(authManager, jwtUtil));
+        http.addFilter(new JWTAuthorizationFilter(authManager, jwtUtil, userDetailsService));
         http.authorizeHttpRequests(authz -> authz.requestMatchers(PUBLIC_MATCHERS).permitAll().anyRequest().authenticated());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
