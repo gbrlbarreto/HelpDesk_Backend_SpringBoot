@@ -47,16 +47,18 @@ public class ClienteService {
     public Cliente update(Integer id, @Valid ClienteDTO objDTO) {
         objDTO.setId(id);
         Cliente oldObj = findById(id);
-        if (objDTO.getSenha() == null || objDTO.getSenha().isBlank()) {
-            objDTO.setSenha(oldObj.getSenha());
-        } else {
-            if (!objDTO.getSenha().equals(oldObj.getSenha())) {
+        if (objDTO.getSenha() != null && !objDTO.getSenha().isEmpty()) {
+            if (!encoder.matches(objDTO.getSenha(), oldObj.getSenha())) {
                 objDTO.setSenha(encoder.encode(objDTO.getSenha()));
+            } else {
+                objDTO.setSenha(oldObj.getSenha());
             }
+        } else {
+            objDTO.setSenha(oldObj.getSenha());
         }
         validaPorCpfEEmail(objDTO);
-        Cliente updated = new Cliente(objDTO);
-        return repository.save(updated);
+        oldObj = new Cliente(objDTO);
+        return repository.save(oldObj);
     }
 
     public void delete(Integer id) {
